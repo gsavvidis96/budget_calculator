@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  db-test:
+    image: "postgres:latest"
+    ports:
+      - "${TEST_DB_EXPOSED_PORT}:5432"
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+
+  cache-dev:
+    image: "redis:latest"

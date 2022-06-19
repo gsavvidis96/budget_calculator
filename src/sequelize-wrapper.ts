@@ -12,18 +12,28 @@ class SequelizeWrapper {
         return this._client;
     }
 
-    connect() {
+    async connect(host: string, dbName: string, port?: number, logging?: boolean) {
         this._client = new Sequelize
             (
-                process.env.DB_NAME!,
+                dbName,
                 process.env.DB_USER!,
                 process.env.DB_PASSWORD,
                 {
-                    host: process.env.DB_HOST,
+                    host,
+                    port,
                     dialect: process.env.DB_DIALECT as Dialect,
-                    models: [__dirname + "/db/models/*.model.ts"]
+                    models: [__dirname + "/db/models/*.model.ts"],
+                    logging: logging ? console.log : false
                 }
             )
+
+        await this._client.authenticate();
+    }
+
+    async disconnect() {
+        await this._client?.close();
+
+        this._client = undefined;
     }
 }
 
