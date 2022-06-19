@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { sequelizeWrapper } from "../sequelize-wrapper";
+import { sequelizeWrapper } from "./sequelize-wrapper";
 import crypto from "crypto";
 import { Client } from "pg";
 

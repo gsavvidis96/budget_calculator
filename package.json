@@ -12,7 +12,7 @@
   "jest": {
     "preset": "ts-jest",
     "setupFilesAfterEnv": [
-      "./src/test/setup.ts"
+      "./src/jest-setup.ts"
     ]
   },
   "keywords": [],

@@ -4,9 +4,9 @@ import cors from "cors";
 import express from "express";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { errorHandler } from "./middlewares/errorHandler.middleware";
+import { errorHandler } from "./middlewares/errorHandler";
 import { HttpError } from "./types";
-import { authRoutes } from "./routes/auth.routes";
+import authRoutes from "./routes/auth";
 
 // TODO LOGGER, SWAGGER, DB BACKUP
 

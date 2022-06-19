@@ -1,12 +1,12 @@
 import { Router } from "express";
 import { body } from "express-validator";
-import { signup } from "../controllers/auth.controller";
-import { validationError } from "../middlewares/validationError.middleware";
+import { validationError } from "../../middlewares/validationError";
+import { RequestHandler } from 'express';
 
 const router = Router();
 
 router.post(
-    '/signup',
+    '/login',
     [
         body("email")
             .notEmpty()
@@ -19,7 +19,11 @@ router.post(
             .withMessage('password is required'),
     ],
     validationError,
-    signup
+    (async (req, res, next) => {
+        res.status(200).send({
+            msg: "hi"
+        })
+    }) as RequestHandler
 )
 
-export { router as authRoutes };
+export { router as loginRoute };

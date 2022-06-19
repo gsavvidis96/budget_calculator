@@ -1,8 +1,8 @@
-import User from "../../db/models/user.model";
-import { Providers, Roles } from "../../types";
+import User from "../../../db/models/user.model";
+import { Providers, Roles } from "../../../types";
 
-it("peos test 1", async () => {
-    console.log("PEOS TEST 1");
+it("signup test 1", async () => {
+    console.log("SIGNUP TEST 1");
 
     await User.create({
         email: "xaxa@xaxa.com",
@@ -17,8 +17,8 @@ it("peos test 1", async () => {
 });
 
 
-it("peos test 2", async () => {
-    console.log("PEOS TEST 2");
+it("signup test 2", async () => {
+    console.log("SIGNUP TEST 2");
 
     // await User.create({
     //     email: "xaxa@xaxa.com",
