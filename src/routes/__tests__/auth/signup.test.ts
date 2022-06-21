@@ -1,4 +1,5 @@
 import User from "../../../db/models/user.model";
+import { redisWrapper } from "../../../redis-wrapper";
 import { Providers, Roles } from "../../../types";
 
 it("signup test 1", async () => {
@@ -30,4 +31,6 @@ it("signup test 2", async () => {
     const users = await User.findAll();
 
     console.log(users.length);
+
+    console.log((await redisWrapper.client.get("xaxa")))
 });
