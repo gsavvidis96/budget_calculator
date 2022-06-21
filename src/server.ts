@@ -4,7 +4,7 @@ import { sequelizeWrapper } from "./sequelize-wrapper";
 
 const start = async () => {
     await sequelizeWrapper.connect(process.env.DB_HOST!, process.env.DB_NAME!);
-    await redisWrapper.connect();
+    await redisWrapper.connect(process.env.REDIS_HOST!);
 
     app.listen(process.env.PORT, () => {
         console.log(`Listening on port ${process.env.PORT}`);

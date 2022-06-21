@@ -1,11 +1,7 @@
-import { createClient } from "redis";
+import { createClient, RedisClientType } from "redis";
 
 class RedisWrapper {
-    private _client = createClient({
-        socket: {
-            host: process.env.REDIS_HOST
-        }
-    });
+    private _client?: RedisClientType;
 
     get client() {
         if (!this._client) {
@@ -15,8 +11,21 @@ class RedisWrapper {
         return this._client;
     }
 
-    async connect() {
+    async connect(host: string, port?: number) {
+        this._client = createClient({
+            socket: {
+                host,
+                port
+            }
+        });
+
         await this.client.connect();
+    }
+
+    async disconnect() {
+        await this._client?.disconnect();
+
+        this._client = undefined;
     }
 }
 
