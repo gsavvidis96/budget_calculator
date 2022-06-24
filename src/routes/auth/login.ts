@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { body } from "express-validator";
-import { validationError } from "../../middlewares/validationError";
+import { validationError } from "../../middlewares/validation-error";
 import { RequestHandler } from 'express';
 
 const router = Router();

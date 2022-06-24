@@ -4,7 +4,7 @@ import cors from "cors";
 import express from "express";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { errorHandler } from "./middlewares/errorHandler";
+import { errorHandler } from "./middlewares/error-handler";
 import { HttpError } from "./types";
 import authRoutes from "./routes/auth";
 

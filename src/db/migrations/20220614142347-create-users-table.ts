@@ -24,6 +24,10 @@ export default {
                 type: DataTypes.ENUM(...Object.keys(Roles)),
                 allowNull: false,
             },
+            emailVerified: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false
+            },
             createdAt: DataTypes.DATE,
             updatedAt: DataTypes.DATE,
             deletedAt: DataTypes.DATE,

@@ -10,6 +10,7 @@ export interface UserAttributes {
     providerId?: string;
     password?: string;
     role: Roles
+    emailVerified: boolean
 }
 
 export interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {
@@ -57,6 +58,12 @@ export default class User extends Model<UserAttributes, UserCreationAttributes> 
         allowNull: false,
     })
     role!: Roles
+
+    @Column({
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+    })
+    emailVerified!: boolean
 
     @CreatedAt
     @Column

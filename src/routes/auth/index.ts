@@ -1,7 +1,7 @@
 import { signupRoute } from "./signup";
-import { loginRoute } from "./login";
+import { verifyRoute } from "./verify";
 
 export default [
     signupRoute,
-    loginRoute
+    verifyRoute
 ]
