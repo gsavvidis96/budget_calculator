@@ -64,7 +64,7 @@ router.post(
         //send email with verification code
         //TODO
 
-        // generate access
+        // generate access token
         const { accessToken } = await generateTokens(user.id, user.role, user.emailVerified);
 
         res.status(201).send({
