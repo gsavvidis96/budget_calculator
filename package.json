@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "rm -rf ./dist && tsc && npx sequelize-cli db:migrate && nodemon src/server.ts",
-    "test": "jest --watch",
+    "test": "jest --watchAll",
     "docker-dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.test.yml",
     "docker-test": "docker-compose -f docker-compose.test.yml"
   },
