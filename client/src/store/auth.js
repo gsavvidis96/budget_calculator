@@ -1,29 +1,40 @@
-import axios from 'axios';
+import { auth } from "@/firebase";
+import { signOut, signInWithCustomToken } from "firebase/auth";
+import axios from "axios";
 
 export default {
     state: {
-        token: localStorage.getItem('token') || null,
-        role: localStorage.getItem('role') || null
+        initialized: false,
+        user: null
     },
     getters: {
-        isLoggedIn: state => !!state.token
+        isLoggedIn: state => !!state.user
     },
     mutations: {
+        initializeAuthState(state) {
+            state.initialized = true;
+        },
         login(state, user) {
-            state.token = user.token;
-            state.role = user.role;
+            state.user = user
         },
         logout(state) {
-            state.token = null;
-            state.role = null;
+            state.user = null;
         }
     },
     actions: {
-        async login({ commit, dispatch }, credentials) {
+        async login({ commit }, token) {
+            const res = await signInWithCustomToken(auth, token);
 
+            const idToken = await res.user.getIdToken();
+
+            axios.defaults.headers.common['Authorization'] = `Bearer ${idToken}`;
+
+            commit("login", res.user);
         },
         async logout({ commit }) {
+            await signOut(auth);
 
+            commit("logout");
         }
     }
 }
