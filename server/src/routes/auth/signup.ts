@@ -2,13 +2,9 @@ import { Router } from "express";
 import { body } from "express-validator";
 import { validationError } from "../../middlewares/validation-error";
 import { RequestHandler } from 'express';
-import { HttpError, Providers, Roles } from '../../types';
-import User from '../../db/models/user.model';
-import bcrypt from "bcrypt";
-import crypto from "crypto";
-import { redisWrapper } from "../../redis-wrapper";
-import dayjs from "dayjs";
-import { generateTokens } from "./generate-tokens";
+import { HttpError, Roles } from '../../types';
+import { auth } from "../../firebase";
+import User from "../../db/models/user.model";
 
 const router = Router();
 
@@ -28,48 +24,47 @@ router.post(
     validationError,
     (async (req, res, next) => {
         //if email exists, throw an error
-        const found = await User.findOne({
-            where: {
-                email: req.body.email
-            }
-        });
+        let emailExists;
 
-        if (found) {
-            throw new HttpError("email already exists", 400)
+        try {
+            emailExists = await auth.getUserByEmail(req.body.email);
+        } catch (e) { }
+
+        if (emailExists) {
+            throw new HttpError("email already exists", 400);
         }
 
-        //create user with emailVerfied false
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
-
-        const user = await User.create({
+        //create user in firebase (with emailVerfied false by default)
+        const firebaseUser = await auth.createUser({
             email: req.body.email,
-            password: hashedPassword,
-            createdWith: Providers.EMAIL,
-            role: Roles.USER,
-            emailVerified: false
+            password: req.body.password
         })
 
-        //generate random string for email verification and store it in redis for 6 hours.
-        const verificationToken = crypto.randomBytes(16).toString('hex');
+        let user;
 
-        redisWrapper.client.set
-            (
-                `verification:${user.id}`,
-                verificationToken,
-                {
-                    PX: dayjs().add(6, "hours").diff(dayjs(), "milliseconds")
-                }
-            )
+        try {
+            //create user in database with matching firebase user id
+            user = await User.create({
+                id: firebaseUser.uid,
+                email: firebaseUser.email!,
+                role: Roles.USER
+            })
+        } catch (e) {
+            await auth.deleteUser(firebaseUser.uid)
+            throw new Error();
+        }
 
-        //send email with verification code
-        //TODO
+        // The new custom claims will propagate to the user's ID token the
+        // next time a new one is issued.
+        await auth.setCustomUserClaims(firebaseUser.uid, { role: Roles.USER });
 
-        // generate access token
-        const { accessToken } = await generateTokens(user.id, user.role, user.emailVerified);
+        //create custom token
+        const token = await auth.createCustomToken(firebaseUser.uid);
 
         res.status(201).send({
             user,
-            accessToken
+            firebaseUser,
+            token
         })
     }) as RequestHandler
 )

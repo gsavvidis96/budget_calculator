@@ -6,11 +6,7 @@ import { Providers, Roles } from '../../types';
 export interface UserAttributes {
     id: string;
     email: string;
-    createdWith: Providers;
-    providerId?: string;
-    password?: string;
     role: Roles
-    emailVerified: boolean
 }
 
 export interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {
@@ -23,10 +19,9 @@ export interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {
     paranoid: true,
 })
 export default class User extends Model<UserAttributes, UserCreationAttributes> {
-    @Default(DataTypes.UUIDV4)
     @Column({
-        type: DataTypes.UUID,
-        primaryKey: true,
+        type: DataTypes.STRING,
+        primaryKey: true
     })
     id!: string
 
@@ -38,32 +33,10 @@ export default class User extends Model<UserAttributes, UserCreationAttributes> 
     email!: string
 
     @Column({
-        type: DataTypes.ENUM(...Object.keys(Providers)),
-        allowNull: false,
-    })
-    createdWith!: Providers
-
-    @Column({
-        type: DataTypes.STRING
-    })
-    providerId?: string
-
-    @Column({
-        type: DataTypes.STRING
-    })
-    password?: string
-
-    @Column({
         type: DataTypes.ENUM(...Object.keys(Roles)),
         allowNull: false,
     })
     role!: Roles
-
-    @Column({
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-    })
-    emailVerified!: boolean
 
     @CreatedAt
     @Column
