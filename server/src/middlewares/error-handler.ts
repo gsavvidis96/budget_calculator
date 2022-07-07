@@ -7,5 +7,5 @@ export const errorHandler = ((err, req, res, next) => {
         return res.status(err.statusCode).send({ message: err.message, fields: err.fields });
     }
 
-    res.status(500).send({ message: err.message });
+    res.status(500).send({ message: err.message || "Something went wrong." });
 }) as ErrorRequestHandler;

@@ -30,7 +30,7 @@ router.post(
             } catch (e) {
                 // if this operation fails, delete the firebase user and throw an error
                 await auth.deleteUser(decoded.uid)
-                throw new Error();
+                throw e;
             }
         }
 

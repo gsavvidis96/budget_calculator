@@ -54,7 +54,7 @@ router.post(
         } catch (e) {
             // if this operation fails, delete the firebase user and throw an error
             await auth.deleteUser(user.uid)
-            throw new Error();
+            throw e;
         }
 
         //add custom claims
