@@ -3,7 +3,7 @@
     <Navigation v-if="initialized" />
 
     <v-main>
-      <!-- <v-btn @click="test">test</v-btn> -->
+      <v-btn @click="test">test</v-btn>
 
       <div class="component-wrapper" v-if="!initialized">
         <v-progress-circular
