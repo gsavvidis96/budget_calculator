@@ -2,10 +2,17 @@ version: "3"
 
 services:
   db-test:
-    image: "postgres:latest"
+    image: postgres:latest
     ports:
-      - "${TEST_DB_EXPOSED_PORT}:5432"
+      - ${TEST_DB_EXPOSED_PORT}:5432
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
+  firebase-emulator:
+    image: spine3/firebase-emulator
+    ports:
+      - 9099:9099
+      - 4000:4000
+    environment:
+      GCP_PROJECT: ${FIREBASE_PROJECT_ID}

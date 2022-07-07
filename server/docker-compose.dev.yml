@@ -9,11 +9,11 @@ services:
       - /app/node_modules
       - .:/app
     ports:
-      - "${PORT}:${PORT}"
+      - ${PORT}:${PORT}
 
   db:
     ports:
-      - "${DB_EXPOSED_PORT}:5432"
+      - ${DB_EXPOSED_PORT}:5432
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
