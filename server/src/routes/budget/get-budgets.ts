@@ -7,7 +7,10 @@ const router = Router();
 
 router.get(
     '/get-budgets',
-    requiresAuth(Roles.USER, true),
+    requiresAuth({
+        role: Roles.USER,
+        emailVerified: true,
+    }),
     (async (req, res, next) => {
         res.status(201).send({
             msg: "hi"

@@ -1,4 +1,4 @@
-import { Table, Column, Model, HasOne, CreatedAt, UpdatedAt, DeletedAt, Default, AfterDestroy } from 'sequelize-typescript'
+import { Table, Column, Model, HasOne, CreatedAt, UpdatedAt, DeletedAt } from 'sequelize-typescript'
 import { Optional, DataTypes } from 'sequelize'
 import { Providers, Roles } from '../../types';
 // import Profile, { ProfileCreationAttributes } from './profile.model';
@@ -7,6 +7,7 @@ export interface UserAttributes {
     id: string;
     email: string;
     role: Roles
+    provider: Providers
 }
 
 export interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {
@@ -37,6 +38,12 @@ export default class User extends Model<UserAttributes, UserCreationAttributes> 
         allowNull: false,
     })
     role!: Roles
+
+    @Column({
+        type: DataTypes.ENUM(...Object.keys(Providers)),
+        allowNull: false,
+    })
+    provider!: Providers
 
     @CreatedAt
     @Column

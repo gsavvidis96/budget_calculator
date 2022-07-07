@@ -1,11 +1,18 @@
-import dayjs from "dayjs";
 import { ValidationError } from "express-validator"
 import { JwtPayload } from "jsonwebtoken";
 
 export enum Providers {
     FACEBOOK = "FACEBOOK",
     GOOGLE = "GOOGLE",
-    EMAIL = "EMAIL"
+    PASSWORD = "PASSWORD"
+}
+
+export const getProviderByValue = (value: string): Providers => {
+    if (value == 'google.com') return Providers.GOOGLE;
+    if (value == 'facebook.com') return Providers.FACEBOOK;
+    if (value == 'password') return Providers.PASSWORD;
+
+    throw new Error();
 }
 
 export enum Roles {
@@ -39,7 +46,8 @@ declare global {
         interface Request {
             user?: {
                 userId: string,
-                role: Roles
+                role: Roles,
+                emailVerified: boolean
             };
         }
     }

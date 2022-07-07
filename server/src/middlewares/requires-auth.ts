@@ -1,8 +1,9 @@
 import { RequestHandler } from "express";
 import { HttpError, Roles } from "../types";
 import { auth } from "../firebase";
+import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 
-export const requiresAuth = (role: Roles, requiresEmailVerified: boolean) => {
+export const requiresAuth = (options: { role: Roles, emailVerified: boolean }) => {
     return (async (req, res, next) => {
 
         const token = req.headers.authorization?.split(" ")[1]!; //extract access token from auth header
@@ -12,28 +13,31 @@ export const requiresAuth = (role: Roles, requiresEmailVerified: boolean) => {
             throw new HttpError("unauthorized", 401);
         }
 
-        let decoded;
+        let decoded: DecodedIdToken;
 
         //decode token
         try {
             decoded = await auth.verifyIdToken(token);
+
+            if (!decoded.role) throw new Error();
         } catch (e) {
+            // if cannot decode token or the decoded token has no role then throw unauthorized error
             throw new HttpError("unauthorized", 401);
         }
 
-        //if decoded token's role is not the same as the provided role, throw forbidden error
-        if (decoded.role !== role) {
-            throw new HttpError("you have not access in this resource", 403);
+        //if provided options do not match with the decoded token's attributes then throw forbidden error
+        if (
+            (options.role != decoded.role) ||
+            (options.emailVerified != decoded.email_verified)
+        ) {
+            throw new HttpError("forbidden", 403);
         }
 
-        //if provided emailVerified is true and decoded email_verified is false then throw forbidden error
-        if (requiresEmailVerified && !decoded.email_verified) {
-            throw new HttpError("must have email_verified: true", 403);
-        }
-
+        //set req.user
         req.user = {
             userId: decoded.uid,
-            role: decoded.role
+            role: decoded.role,
+            emailVerified: decoded.email_verified!
         }
 
         next();

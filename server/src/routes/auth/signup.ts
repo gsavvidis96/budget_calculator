@@ -2,7 +2,7 @@ import { Router } from "express";
 import { body } from "express-validator";
 import { validationError } from "../../middlewares/validation-error";
 import { RequestHandler } from 'express';
-import { HttpError, Roles } from '../../types';
+import { HttpError, Providers, Roles } from '../../types';
 import { auth } from "../../firebase";
 import User from "../../db/models/user.model";
 
@@ -18,16 +18,19 @@ router.post(
             .isEmail()
             .withMessage('must be a valid email format'),
         body("password")
+            .trim()
             .notEmpty()
             .withMessage('password is required'),
     ],
     validationError,
     (async (req, res, next) => {
+        const { email, password } = req.body;
+
         //if email exists, throw an error
         let emailExists;
 
         try {
-            emailExists = await auth.getUserByEmail(req.body.email);
+            emailExists = await auth.getUserByEmail(email);
         } catch (e) { }
 
         if (emailExists) {
@@ -35,35 +38,33 @@ router.post(
         }
 
         //create user in firebase (with emailVerfied false by default)
-        const firebaseUser = await auth.createUser({
-            email: req.body.email,
-            password: req.body.password
+        const user = await auth.createUser({
+            email,
+            password
         })
-
-        let user;
 
         try {
             //create user in database with matching firebase user id
-            user = await User.create({
-                id: firebaseUser.uid,
-                email: firebaseUser.email!,
-                role: Roles.USER
+            await User.create({
+                id: user.uid,
+                email: user.email!,
+                role: Roles.USER,
+                provider: Providers.PASSWORD
             })
         } catch (e) {
-            await auth.deleteUser(firebaseUser.uid)
+            // if this operation fails, delete the firebase user and throw an error
+            await auth.deleteUser(user.uid)
             throw new Error();
         }
 
-        // The new custom claims will propagate to the user's ID token the
-        // next time a new one is issued.
-        await auth.setCustomUserClaims(firebaseUser.uid, { role: Roles.USER });
+        //add custom claims
+        await auth.setCustomUserClaims(user.uid, { role: Roles.USER });
 
         //create custom token
-        const token = await auth.createCustomToken(firebaseUser.uid);
+        const token = await auth.createCustomToken(user.uid);
 
+        //send the token in the response
         res.status(201).send({
-            user,
-            firebaseUser,
             token
         })
     }) as RequestHandler
