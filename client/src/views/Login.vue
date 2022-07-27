@@ -75,6 +75,7 @@ import axios from "axios";
 import { mapActions } from "vuex";
 import { auth } from "@/firebase";
 import { signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
+import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
 
 export default {
   data() {
@@ -109,6 +110,12 @@ export default {
       this.loader = false;
     },
     async onGoogleLogin() {
+      const res = await GoogleAuth.signIn();
+
+      console.log(res);
+
+      return;
+
       try {
         //first login (without custom token)
         const googleRes = await signInWithPopup(auth, new GoogleAuthProvider());
