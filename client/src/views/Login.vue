@@ -62,8 +62,8 @@
         Continue with Google
       </v-btn>
 
-      <v-btn color="white">
-        <v-icon left>mdi-google</v-icon>
+      <v-btn color="white" @click="onFacebookLogin">
+        <v-icon left>mdi-facebook</v-icon>
         Continue with Facebook
       </v-btn>
     </div>
@@ -74,8 +74,9 @@
 import axios from "axios";
 import { mapActions } from "vuex";
 import { auth } from "@/firebase";
-import { signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
+import { signOut, FacebookAuthProvider } from "firebase/auth";
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
+import { FacebookLogin } from "@capacitor-community/facebook-login";
 
 export default {
   data() {
@@ -110,40 +111,54 @@ export default {
       this.loader = false;
     },
     async onGoogleLogin() {
-      const res = await GoogleAuth.signIn();
-
-      console.log(res);
-
-      return;
-
       try {
-        //first login (without custom token)
-        const googleRes = await signInWithPopup(auth, new GoogleAuthProvider());
+        //login with google and get idtoken
+        const google = await GoogleAuth.signIn();
 
-        const idToken = await googleRes.user.getIdToken();
-
-        console.log(idToken);
-
-        // //add idToken to auth header
-        // axios.defaults.headers.common["Authorization"] = `Bearer ${idToken}`;
-
-        //call providerLogin to issue custom token (and create user in our database if it is the first login)
         const res = await axios.post(
           "http://localhost:3000/auth/provider-login",
           {
-            idToken,
+            providerToken: google.authentication.idToken,
+            provider: "GOOGLE",
           }
         );
-
-        //signout of the non custom token session
-        await signOut(auth);
 
         //then login (with custom token)
         await this.login(res.data.token);
 
+        await GoogleAuth.signOut();
+
         this.$router.push("/");
-      } catch (error) {
+      } catch (e) {
         await signOut(auth);
+        await GoogleAuth.signOut();
+      }
+    },
+    async onFacebookLogin() {
+      try {
+        const FACEBOOK_PERMISSIONS = ["email", "public_profile"];
+
+        const facebook = await FacebookLogin.login({
+          permissions: FACEBOOK_PERMISSIONS,
+        });
+
+        const res = await axios.post(
+          "http://localhost:3000/auth/provider-login",
+          {
+            providerToken: facebook.accessToken.token,
+            provider: "FACEBOOK",
+          }
+        );
+
+        //then login (with custom token)
+        await this.login(res.data.token);
+
+        await FacebookLogin.logout();
+
+        this.$router.push("/");
+      } catch (e) {
+        await signOut(auth);
+        await FacebookLogin.logout();
       }
     },
   },

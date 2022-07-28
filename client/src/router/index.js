@@ -7,6 +7,7 @@ import Login from '../views/Login.vue'
 import Signup from '../views/Signup.vue'
 import VerifyEmail from '../views/VerifyEmail.vue'
 import EmailVerified from '../views/EmailVerified.vue'
+import ForgotPassword from '../views/ForgotPassword.vue'
 
 Vue.use(VueRouter)
 
@@ -35,6 +36,11 @@ const routes = [
     path: '/email-verified',
     component: EmailVerified,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/forgot-password',
+    component: ForgotPassword,
+    meta: { requiresAuth: false }
   },
 ]
 

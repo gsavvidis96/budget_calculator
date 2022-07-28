@@ -15,6 +15,9 @@ Vue.config.productionTip = false;
 Vue.use(Vuelidate);
 
 onAuthStateChanged(auth, async (user) => {
+  if (user)
+    console.log((await user.getIdToken()));
+
   if (!store.state.auth.initialized) {
     if (user) {
       const idToken = await user.getIdToken();
