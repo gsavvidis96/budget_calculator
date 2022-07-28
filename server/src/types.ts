@@ -15,6 +15,13 @@ export const getProviderByValue = (value: string): Providers => {
     throw new Error();
 }
 
+export const getValueByProvider = (provider: Providers) => {
+    if (provider === Providers.GOOGLE) return "google.com"
+    if (provider === Providers.FACEBOOK) return "facebook.com"
+
+    throw new Error();
+}
+
 export enum Roles {
     USER = "USER",
     ADMIN = "ADMIN"

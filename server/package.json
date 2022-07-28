@@ -6,6 +6,7 @@
   "scripts": {
     "start": "rm -rf ./dist && tsc && npx sequelize-cli db:migrate && nodemon -L src/server.ts",
     "test": "cross-env FIREBASE_AUTH_EMULATOR_HOST=localhost:9099 && jest --watchAll",
+    "test-xaxa": "cross-env FIREBASE_AUTH_EMULATOR_HOST=localhost:9099 && ts-node src/firebase-test",
     "docker-dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.test.yml",
     "docker-test": "docker-compose -f docker-compose.test.yml"
   },

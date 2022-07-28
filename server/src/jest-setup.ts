@@ -11,6 +11,10 @@ let redisServer: RedisMemoryServer;
 let redisHost: string;
 let redisPort: number;
 
+declare global {
+    var signin: (userId: string) => Promise<string>;
+}
+
 const createDb = () => {
     return new Promise<void>(async (resolve, reject) => {
         const client = new Client({
@@ -63,3 +67,7 @@ afterAll(async () => {
     await redisWrapper.disconnect();
     await redisServer.stop();
 })
+
+global.signin = async () => {
+    return "";
+};
