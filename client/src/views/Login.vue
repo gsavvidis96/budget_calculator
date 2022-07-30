@@ -74,9 +74,14 @@
 import axios from "axios";
 import { mapActions } from "vuex";
 import { auth } from "@/firebase";
-import { signOut, FacebookAuthProvider } from "firebase/auth";
+import {
+  signOut,
+  FacebookAuthProvider,
+  linkWithCredential,
+} from "firebase/auth";
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
 import { FacebookLogin } from "@capacitor-community/facebook-login";
+import { mapState } from "vuex";
 
 export default {
   data() {
@@ -86,6 +91,11 @@ export default {
       loader: false,
       wrongCredentials: null,
     };
+  },
+  computed: {
+    ...mapState({
+      user: (state) => state.auth.user,
+    }),
   },
   methods: {
     ...mapActions(["login"]),
@@ -153,10 +163,25 @@ export default {
         //then login (with custom token)
         await this.login(res.data.token);
 
+        console.log(this.user);
+
+        // const found = this.user.providerData.find(
+        //   (provider) => provider.providerId == "facebook.com"
+        // );
+
+        // if (!found) {
+        //   const credential = FacebookAuthProvider.credential(
+        //     facebook.accessToken.token
+        //   );
+
+        //   await linkWithCredential(this.user, credential);
+        // }
+
         await FacebookLogin.logout();
 
         this.$router.push("/");
       } catch (e) {
+        console.log(e);
         await signOut(auth);
         await FacebookLogin.logout();
       }

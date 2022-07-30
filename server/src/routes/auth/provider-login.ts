@@ -2,7 +2,7 @@ import { Router } from "express";
 import { RequestHandler } from 'express';
 import { auth } from "../../firebase";
 import User from "../../db/models/user.model";
-import { getProviderByValue, getValueByProvider, HttpError, Providers, Roles } from "../../types";
+import { getValueByProvider, HttpError, Providers, Roles } from "../../types";
 import { body } from "express-validator";
 import { validationError } from "../../middlewares/validation-error";
 import axios from "axios";
@@ -56,7 +56,6 @@ router.post(
                 await User.create({
                     id: firebaseUser.data.localId,
                     email: firebaseUser.data.email,
-                    provider: getProviderByValue(firebaseUser.data.providerId),
                     role: Roles.USER
                 })
 

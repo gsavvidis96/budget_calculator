@@ -1,5 +1,5 @@
 import { QueryInterface, DataTypes } from 'sequelize';
-import { Providers, Roles } from '../../types';
+import { Roles } from '../../types';
 
 export default {
     up: async (queryInterface: QueryInterface): Promise<void> => {
@@ -7,10 +7,6 @@ export default {
             id: {
                 type: DataTypes.STRING,
                 primaryKey: true
-            },
-            provider: {
-                type: DataTypes.ENUM(...Object.keys(Providers)),
-                allowNull: false,
             },
             role: {
                 type: DataTypes.ENUM(...Object.keys(Roles)),

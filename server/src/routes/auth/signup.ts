@@ -2,7 +2,7 @@ import { Router } from "express";
 import { body } from "express-validator";
 import { validationError } from "../../middlewares/validation-error";
 import { RequestHandler } from 'express';
-import { HttpError, Providers, Roles } from '../../types';
+import { HttpError, Roles } from '../../types';
 import { auth } from "../../firebase";
 import User from "../../db/models/user.model";
 
@@ -48,8 +48,7 @@ router.post(
             await User.create({
                 id: user.uid,
                 email: user.email!,
-                role: Roles.USER,
-                provider: Providers.PASSWORD
+                role: Roles.USER
             })
         } catch (e) {
             // if this operation fails, delete the firebase user and throw an error
