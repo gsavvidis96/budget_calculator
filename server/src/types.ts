@@ -2,24 +2,9 @@ import { ValidationError } from "express-validator"
 import { JwtPayload } from "jsonwebtoken";
 
 export enum Providers {
-    FACEBOOK = "FACEBOOK",
-    GOOGLE = "GOOGLE",
-    PASSWORD = "PASSWORD"
-}
-
-export const getProviderByValue = (value: string): Providers => {
-    if (value == 'google.com') return Providers.GOOGLE;
-    if (value == 'facebook.com') return Providers.FACEBOOK;
-    if (value == 'password') return Providers.PASSWORD;
-
-    throw new Error();
-}
-
-export const getValueByProvider = (provider: Providers) => {
-    if (provider === Providers.GOOGLE) return "google.com"
-    if (provider === Providers.FACEBOOK) return "facebook.com"
-
-    throw new Error();
+    PASSWORD = "password",
+    GOOGLE = "google.com",
+    FACEBOOK = "facebook.com",
 }
 
 export enum Roles {

@@ -38,33 +38,37 @@ router.post(
         }
 
         //create user in firebase (with emailVerfied false by default)
-        const user = await auth.createUser({
+        const firebaseUser = await auth.createUser({
             email,
             password
         })
 
+        let createdUser
+
         try {
             //create user in database with matching firebase user id
-            await User.create({
-                id: user.uid,
-                email: user.email!,
+            createdUser = await User.create({
+                id: firebaseUser.uid,
+                email: firebaseUser.email!,
                 role: Roles.USER
             })
         } catch (e) {
             // if this operation fails, delete the firebase user and throw an error
-            await auth.deleteUser(user.uid)
+            await auth.deleteUser(firebaseUser.uid)
             throw e;
         }
 
         //add custom claims
-        await auth.setCustomUserClaims(user.uid, { role: Roles.USER });
+        await auth.setCustomUserClaims(firebaseUser.uid, { role: Roles.USER });
 
         //create custom token
-        const token = await auth.createCustomToken(user.uid);
+        const token = await auth.createCustomToken(firebaseUser.uid);
 
         //send the token in the response
         res.status(201).send({
-            token
+            token,
+            role: createdUser.role,
+            emailVerified: firebaseUser.emailVerified
         })
     }) as RequestHandler
 )

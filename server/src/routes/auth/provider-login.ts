@@ -2,7 +2,7 @@ import { Router } from "express";
 import { RequestHandler } from 'express';
 import { auth } from "../../firebase";
 import User from "../../db/models/user.model";
-import { getValueByProvider, HttpError, Providers, Roles } from "../../types";
+import { HttpError, Providers, Roles } from "../../types";
 import { body } from "express-validator";
 import { validationError } from "../../middlewares/validation-error";
 import axios from "axios";
@@ -19,7 +19,7 @@ router.post(
             .notEmpty()
             .withMessage('provider is required')
             .bail()
-            .isIn(["GOOGLE", "FACEBOOK"])
+            .isIn(Object.values(Providers))
             .withMessage("possible provider values are 'GOOGLE' or 'FACEBOOK'")
     ],
     validationError,
@@ -37,7 +37,7 @@ router.post(
             firebaseUser = await axios.post(
                 `https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key=${process.env.FIREBASE_CLIENT_API_KEY}`,
                 {
-                    postBody: `${tokenKey}=${providerToken}&providerId=${getValueByProvider(provider)}`,
+                    postBody: `${tokenKey}=${providerToken}&providerId=${provider}`,
                     requestUri: "http://localhost"
                 }
             )
